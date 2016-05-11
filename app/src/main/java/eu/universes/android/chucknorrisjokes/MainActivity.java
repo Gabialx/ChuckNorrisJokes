@@ -20,6 +20,8 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView textView;
 
+    private InternetService service = new InternetService(this);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,44 +29,13 @@ public class MainActivity extends AppCompatActivity {
 
         textView = (TextView) findViewById(R.id.textView);
 
-        downloadJokes();
-    }
+        service.init();
+        InternetService.JokesResult jokesResult = service.jokes();
 
-    private void downloadJokes() {
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
-        try {
-            if (isNetworkAvailable()) {
-                URL url = new URL("http://api.icndb.com/jokes");
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                InputStream inputStream = connection.getInputStream();
-
-                BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
-                StringBuilder total = new StringBuilder();
-                String line;
-                while ((line = r.readLine()) != null) {
-                    total.append(line).append('\n');
-                }
-
-                String result = total.toString();
-
-                textView.setText(result);
-            } else {
-                textView.setText("There is no available network.");
-            }
-
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (jokesResult.isSuccess()) {
+            textView.setText(jokesResult.getMessage());
+        } else {
+            textView.setText(jokesResult.getError());
         }
-    }
-
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }
