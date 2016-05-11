@@ -10,15 +10,20 @@ public class MainActivity extends AppCompatActivity {
 
     private InternetService service = new InternetService(this);
 
+    private DatabaseService databaseService = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        databaseService = new DatabaseService(getApplicationContext());
+
         textView = (TextView) findViewById(R.id.textView);
 
         service.init();
         JokesResult jokesResult = service.jokes();
+        databaseService.persist(jokesResult);
 
         if (jokesResult.isSuccess()) {
             textView.setText(jokesResult.toString());
