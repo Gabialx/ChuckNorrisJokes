@@ -39,17 +39,6 @@ public class InternetService {
                 InputStream inputStream = connection.getInputStream();
 
                 return jokes(inputStream);
-
-//                BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
-//                StringBuilder total = new StringBuilder();
-//                String line;
-//                while ((line = r.readLine()) != null) {
-//                    total.append(line).append('\n');
-//                }
-//
-//                String result = total.toString();
-//
-//                return new JokesResult(true, null /* result */, null);
             } else {
                 return new JokesResult(false, null, "There is no available network.");
             }
